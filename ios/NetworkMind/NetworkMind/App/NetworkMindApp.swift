@@ -15,6 +15,7 @@ struct NetworkMindApp: App {
             container = DataStore.makeContainer()
         }
         ContactDetectionService.shared.configure(container: container)
+        EventModeManager.shared.configure(container: container)
     }
 
     var body: some Scene {

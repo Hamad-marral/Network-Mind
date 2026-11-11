@@ -14,6 +14,7 @@ struct TodayView: View {
     var body: some View {
         NavigationStack {
             List {
+                Section { EventModeCard() }
                 if !detection.hasAccess {
                     Section { ContactDetectionPromptCard() }
                 }

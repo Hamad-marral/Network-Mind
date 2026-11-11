@@ -5,6 +5,8 @@ enum AppTab: Hashable {
 }
 
 struct RootTabView: View {
+    @EnvironmentObject private var settings: AppSettings
+    @ObservedObject private var eventMode = EventModeManager.shared
     @State private var selection: AppTab = .today
 
     var body: some View {
@@ -21,6 +23,26 @@ struct RootTabView: View {
             SettingsView()
                 .tabItem { Label("Settings", systemImage: "gearshape") }
                 .tag(AppTab.settings)
+        }
+        .safeAreaInset(edge: .top, spacing: 0) { EventModeBanner() }
+        .sheet(isPresented: $eventMode.pendingStartRequest) {
+            EventModeConsentSheet()
+        }
+        .fullScreenCover(isPresented: Binding(
+            get: { !settings.hasAcceptedLegalConsent },
+            set: { _ in }
+        )) {
+            LegalConsentView()
+        }
+        .onOpenURL(perform: handleDeepLink)
+    }
+
+    /// networkmind://event-mode/toggle (also used by docs/automation).
+    private func handleDeepLink(_ url: URL) {
+        guard url.scheme == "networkmind" else { return }
+        if url.host == "event-mode" {
+            selection = .today
+            eventMode.toggleFromShortcut()
         }
     }
 }

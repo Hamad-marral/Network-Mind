@@ -21,6 +21,10 @@ targets:
     platform: iOS
     sources:
       - path: NetworkMind
+      - path: Shared
+    dependencies:
+      - target: NetworkMindWidgets
+        embed: true
     info:
       path: NetworkMind/Info.plist
       properties:
@@ -37,7 +41,13 @@ targets:
         NSLocationWhenInUseUsageDescription: "NetworkMind records the place where you met a new contact (for example, the venue name) so you can recall the meeting later. Location is captured once per new contact and stays on your device."
         NSCalendarsFullAccessUsageDescription: "NetworkMind reads your calendar to label new contacts with the event you were attending, such as a conference or meeting. It never changes your calendar."
         NSCameraUsageDescription: "NetworkMind uses the camera to scan business cards and fill in a contact's name, title, company, phone and email."
+        NSMicrophoneUsageDescription: "NetworkMind records audio only while you turn on Event Mode, so your conversations can be transcribed into meeting notes and follow-ups. Audio stays on your device."
+        NSSupportsLiveActivities: true
+        CFBundleURLTypes:
+          - CFBundleURLName: com.networkmind.app
+            CFBundleURLSchemes: [networkmind]
         UIBackgroundModes:
+          - audio
           - fetch
         BGTaskSchedulerPermittedIdentifiers:
           - com.networkmind.app.contacts-refresh
@@ -49,6 +59,27 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         GENERATE_INFOPLIST_FILE: NO
+
+  NetworkMindWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: NetworkMindWidgets
+      - path: Shared
+    info:
+      path: NetworkMindWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: NetworkMind
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.networkmind.app.widgets
+        TARGETED_DEVICE_FAMILY: "1"
+        GENERATE_INFOPLIST_FILE: NO
+        SKIP_INSTALL: YES
 
   NetworkMindTests:
     type: bundle.unit-test
