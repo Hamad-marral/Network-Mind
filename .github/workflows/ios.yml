@@ -47,6 +47,9 @@ jobs:
           status=$?
           # Print only the interesting lines (errors, test results); full log is uploaded.
           grep -E "error:|Test Case .* (passed|failed)|\*\* (BUILD|TEST) (SUCCEEDED|FAILED) \*\*|Executed [0-9]+ test" xcodebuild.log | head -400
+          # Surface compiler errors and test failures as annotations (readable via the
+          # public check-runs API without downloading logs).
+          python3 scripts/annotate_errors.py xcodebuild.log
           exit $status
 
       - name: Upload logs
