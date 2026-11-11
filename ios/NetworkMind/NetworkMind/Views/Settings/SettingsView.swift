@@ -2,10 +2,26 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject private var settings: AppSettings
+    @ObservedObject private var detection = ContactDetectionService.shared
+    @State private var showingContactSetup = false
 
     var body: some View {
         NavigationStack {
             Form {
+                Section("Contact detection") {
+                    Button {
+                        showingContactSetup = true
+                    } label: {
+                        LabeledContent("Contacts, location & calendar", value: detection.hasAccess ? "On" : "Off")
+                    }
+                    if let last = detection.lastSyncAt {
+                        LabeledContent("Last checked", value: last.formatted(date: .omitted, time: .shortened))
+                    }
+                    if let error = detection.lastError {
+                        Text(error).font(.footnote).foregroundStyle(.red)
+                    }
+                }
+
                 Section {
                     TextField("Your name", text: $settings.profileName)
                     TextField("Role", text: $settings.profileRole)
@@ -42,6 +58,7 @@ struct SettingsView: View {
                 }
             }
             .navigationTitle("Settings")
+            .sheet(isPresented: $showingContactSetup) { ContactDetectionSetupView() }
         }
     }
 }

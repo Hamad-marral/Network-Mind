@@ -32,9 +32,19 @@ targets:
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         ITSAppUsesNonExemptEncryption: false
+        # Usage descriptions: specific about what is read and why.
+        NSContactsUsageDescription: "NetworkMind checks for contacts you newly add so it can remember when and where you met each person. Your address book stays on your device."
+        NSLocationWhenInUseUsageDescription: "NetworkMind records the place where you met a new contact (for example, the venue name) so you can recall the meeting later. Location is captured once per new contact and stays on your device."
+        NSCalendarsFullAccessUsageDescription: "NetworkMind reads your calendar to label new contacts with the event you were attending, such as a conference or meeting. It never changes your calendar."
+        NSCameraUsageDescription: "NetworkMind uses the camera to scan business cards and fill in a contact's name, title, company, phone and email."
+        UIBackgroundModes:
+          - fetch
+        BGTaskSchedulerPermittedIdentifiers:
+          - com.networkmind.app.contacts-refresh
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.networkmind.app
+        SWIFT_OBJC_BRIDGING_HEADER: NetworkMind/Support/NetworkMind-Bridging-Header.h
         TARGETED_DEVICE_FAMILY: "1"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor

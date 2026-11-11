@@ -38,6 +38,9 @@ struct PeopleListView: View {
             .navigationTitle("People")
             .searchable(text: $searchText, prompt: "Name, company, tag")
             .navigationDestination(for: Person.self) { PersonDetailView(person: $0) }
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) { AddPersonMenu() }
+            }
         }
     }
 
