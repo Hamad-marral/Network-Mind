@@ -23,6 +23,11 @@ enum DataStore {
     /// capability with a CloudKit container); if CloudKit cannot be configured we fall back
     /// to a local-only store so the app always launches.
     static func makeContainer(cloudKitEnabled: Bool = AppSettings.shared.cloudKitSyncEnabled) -> ModelContainer {
+        // The default store lives in Application Support, which does not exist on a fresh
+        // install; CoreData would otherwise log a failed create and a recovery attempt.
+        if let support = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
+            try? FileManager.default.createDirectory(at: support, withIntermediateDirectories: true)
+        }
         if cloudKitEnabled {
             do {
                 let config = ModelConfiguration(schema: schema, cloudKitDatabase: .automatic)

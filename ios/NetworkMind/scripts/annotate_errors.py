@@ -9,7 +9,9 @@ import sys
 
 ERROR_RE = re.compile(r"^(?P<file>/[^:]+):(?P<line>\d+):(?:\d+:)? error: (?P<msg>.+)$")
 TEST_FAIL_RE = re.compile(r"^(?P<file>/[^:]+):(?P<line>\d+): error: (?P<msg>-\[.+\] : .+)$")
-GENERIC_RE = re.compile(r"^(?:error|xcodebuild: error|.*: error): (?P<msg>.+)$")
+# Only xcodebuild's own errors; runtime console noise ("CoreData: error: ...") is ignored.
+GENERIC_RE = re.compile(r"^(?:xcodebuild: )?error: (?P<msg>.+)$")
+SUMMARY_RE = re.compile(r"Executed \d+ tests?, with \d+ failures?.*")
 
 MAX_ANNOTATIONS = 10
 PER_ANNOTATION = 8
@@ -25,10 +27,13 @@ def escape(text: str) -> str:
 
 
 def main(log_path: str) -> None:
-    seen, items = set(), []
+    seen, items, summary = set(), [], None
     with open(log_path, encoding="utf-8", errors="replace") as handle:
         for raw in handle:
             line = raw.rstrip("\n")
+            found = SUMMARY_RE.search(line)
+            if found:
+                summary = found.group(0)  # the last one is the overall total
             match = TEST_FAIL_RE.match(line) or ERROR_RE.match(line)
             if match:
                 item = f"{short_path(match['file'])}:{match['line']}: {match['msg']}"
@@ -41,6 +46,8 @@ def main(log_path: str) -> None:
                 seen.add(item)
                 items.append(item)
 
+    if summary:
+        print(f"::notice title=XCTest summary::{escape(summary)}")
     if not items:
         return
     batches = [items[i:i + PER_ANNOTATION] for i in range(0, len(items), PER_ANNOTATION)]
