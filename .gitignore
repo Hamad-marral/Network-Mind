@@ -1,0 +1,25 @@
+# Xcode / XcodeGen (project is generated from ios/NetworkMind/project.yml)
+ios/NetworkMind/NetworkMind.xcodeproj/
+ios/NetworkMind/NetworkMind/Info.plist
+ios/NetworkMind/NetworkMindWidgets/Info.plist
+DerivedData/
+build/
+*.xcuserstate
+xcuserdata/
+*.xcresult
+
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Secrets
+.env
+*.p8
